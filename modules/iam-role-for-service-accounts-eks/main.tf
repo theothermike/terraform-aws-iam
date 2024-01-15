@@ -36,6 +36,21 @@ data "aws_iam_policy_document" "this" {
   }
 
   dynamic "statement" {
+    for_each = var.allow_assume_roles ? [1] : []
+
+    content {
+      sid     = "AllowRolesToAssume"
+      effect  = "Allow"
+      actions = ["sts:AssumeRole"]
+
+      principals {
+        type        = "AWS"
+        identifiers = var.allow_assume_roles_list
+      }
+    }
+  }
+
+  dynamic "statement" {
     for_each = var.oidc_providers
 
     content {
